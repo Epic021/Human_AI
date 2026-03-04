@@ -8,7 +8,7 @@ Ingests an **NSF Funding Opportunity Announcement (FOA)** from a public URL, ext
 
 ```bash
 pip install -r requirements.txt
-python -m spacy download en_core_web_sm  # optional, blank model used by default
+python -m spacy download en_core_web_sm
 
 python main.py \
   --url "https://www.nsf.gov/funding/opportunities/nqni-national-quantum-nanotechnology-infrastructure" \
@@ -100,6 +100,12 @@ Screening_Task/
 - **Full Text Windows** — Generic window-based extraction provides resilient contextual snapshots for any schema requirements
 - **Regex Power Extraction** — Identifiers and numerical boundaries extracted efficiently using optimized Regex over entire text
 - **spaCy matching** — Token-boundary-aware matching instead of naive substring search
+
+## Data Acquisition & Expansion
+
+Currently, the pipeline processes NSF FOA URLs directly. To scale and expand data coverage:
+- **NSF Automated Discovery**: We will utilize the **NSF sitemaps** (as specified in their `robots.txt`) to automatically discover and ingest all available funding opportunities.
+- **Grants.gov Integration**: We can leverage **Grants.gov API** endpoints to programmatically fetch FOA data, allowing for broader multi-agency coverage.
 
 ---
 
