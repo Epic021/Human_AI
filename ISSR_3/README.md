@@ -7,7 +7,7 @@ This project consists of a minimal React frontend and a FastAPI backend designed
 
 ## System Architecture Flowchart
 
-![System Architecture Flowchart](assets/flowchart.jpg)
+![System Architecture Flowchart](assets/flowchart.png)
 
 ## Condition Logic
 The application automatically determines the experimental condition based on the participant's ID (`pid`) given in the URL string:
