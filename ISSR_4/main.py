@@ -166,29 +166,6 @@ def extract_close_dates(text: str) -> Optional[dict[str, str]]:
             
     return close if close else None
 
-# spaCy Tagger
-
-def build_phrase_matcher(nlp):
-    matcher = PhraseMatcher(nlp.vocab, attr="LOWER")
-    label_map = {}
-    for category, terms in ONTOLOGY.items():
-        for label, keywords in terms.items():
-            match_id = f"{category}||{label}"
-            patterns = [nlp.make_doc(kw) for kw in keywords]
-            matcher.add(match_id, patterns)
-            label_map[match_id] = (category, label)
-    return matcher, label_map
-
-def apply_tags(text: str, nlp, matcher, label_map) -> SemanticTags:
-    doc = nlp(text.lower()[:100000])
-    matches = matcher(doc)
-    tags: dict[str, set[str]] = {cat: set() for cat in ONTOLOGY}
-    for match_id, _, _ in matches:
-        mid = nlp.vocab.strings[match_id]
-        cat, label = label_map[mid]
-        tags[cat].add(label)
-    return SemanticTags(**{k: sorted(v) for k, v in tags.items()})
-
 # Page-Level Extraction
 
 def extract_from_main_page(soup: BeautifulSoup, url: str) -> dict:
@@ -235,6 +212,31 @@ def extract_from_solicitation(soup: BeautifulSoup) -> dict:
 
     return data
 
+ 
+# spaCy Tagger
+
+def build_phrase_matcher(nlp):
+    matcher = PhraseMatcher(nlp.vocab, attr="LOWER")
+    label_map = {}
+    for category, terms in ONTOLOGY.items():
+        for label, keywords in terms.items():
+            match_id = f"{category}||{label}"
+            patterns = [nlp.make_doc(kw) for kw in keywords]
+            matcher.add(match_id, patterns)
+            label_map[match_id] = (category, label)
+    return matcher, label_map
+
+def apply_tags(text: str, nlp, matcher, label_map) -> SemanticTags:
+    doc = nlp(text.lower()[:100000])
+    matches = matcher(doc)
+    tags: dict[str, set[str]] = {cat: set() for cat in ONTOLOGY}
+    for match_id, _, _ in matches:
+        mid = nlp.vocab.strings[match_id]
+        cat, label = label_map[mid]
+        tags[cat].add(label)
+    return SemanticTags(**{k: sorted(v) for k, v in tags.items()})
+
+
 # Export
 
 def export_json(record: FOARecord, path: str):
@@ -269,6 +271,7 @@ def ingest_foa(url: str) -> FOARecord:
         sol_soup = fetch_html(sol_url)
         sol_text = sol_soup.get_text(" ", strip=True)
         sol_data = extract_from_solicitation(sol_soup)
+
 
     merged = {**main_data, **{k: v for k, v in sol_data.items() if v}}
     open_d = merged.get("open_date")

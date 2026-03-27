@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+.env
+venv/
+
+# Node
+node_modules/
+
+# Application Specific (Logs)
+backend/output/
+
+# OS Specific
+.DS_Store
+Thumbs.db
